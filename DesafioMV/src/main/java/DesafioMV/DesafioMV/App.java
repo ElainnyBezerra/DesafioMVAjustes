@@ -13,7 +13,7 @@ import entidade.Pessoa;
 public class App {
 	public static void main(String[] args) {
 
-		int resp = 0, resp1 = 0;
+		int resp = 0;
 		String nome, cpf, opcao;
 
 		Scanner cmInt = new Scanner(System.in);
@@ -40,22 +40,10 @@ public class App {
 				System.out.println("Informe a Opção : ");
 				opcao = cmString.nextLine();
 				cf.setOpcao(opcao);
+				cf.setPessoa(ps);
 
 				pessoaDao.inserir(ps);
 				cafeManhaDao.inserir(cf);
-
-				do {
-					System.out.println("Informe a Opção : ");
-					opcao = cmString.nextLine();
-					cf.setOpcao(opcao);
-
-					cafeManhaDao.inserir(cf);
-
-				} while (resp1 == 1);
-
-				System.out.println("Sorvete inserido com sucesso!" + "\n");
-				System.out.println("Deseja inserir mais 1 Opção ?(1 - Sim / 2 - Não)");
-				resp1 = cmInt.nextInt();
 
 				break;
 
@@ -67,21 +55,29 @@ public class App {
 					System.out.println("Informe o cpf que deseja remover: ");
 					cpf = cmString.next();
 					pessoaDao.remover(cpf);
-					System.out.println("Cadastro removido com sucesso!");
+					
 				} else if (rem == 2) {
 					System.out.println("Informe a Opção que deseja remover: ");
 					opcao = cmString.next();
 					cafeManhaDao.remover(opcao);
-					System.out.println("Cadastro removido com sucesso!");
+					
 				}
+				System.out.println("Cadastro removido com sucesso!");
 
 				break;
 
 			case 3:
 
 				List<CafeManha> listaCafeManha = cafeManhaDao.listarTodos();
+				System.out.println("**************************");
+				System.out.println("*                        *");
+				System.out.println("*  LISTA CAFÉ DA MANHÃ   *");
+				System.out.println("*                        *");
+				System.out.println("**************************");
+				System.out.println("    CPF     " + "|"+ "   NOME    " + "|" + "   OPÇÃO  ");
 				for (CafeManha c : listaCafeManha) {
-					System.out.println(c.toString());
+					
+					System.out.println(c.getPessoa().getCpf() + "   " + c.getPessoa().getNome() + "     " + c.getOpcao());
 				}
 
 				break;
@@ -92,42 +88,57 @@ public class App {
 				int cons = cmInt.nextInt();
 				if (cons == 1) {
 					System.out.println("Informe o cpf que deseja consultar: ");
-					cpf = cmString.next();
+					cpf = cmString.nextLine();
 					Pessoa pes = pessoaDao.consultar(cpf);
-					System.out.println(pes.toString());
+					System.out.println("**************************");
+					System.out.println("*                        *");
+					System.out.println("* CONSULTA CAFÉ DA MANHÃ *");
+					System.out.println("*                        *");
+					System.out.println("**************************");
+					System.out.println("    CPF     " + "|"+ "   NOME    ");
+					System.out.println(pes.getCpf() + "   " + pes.getNome());
 
 				} else if (cons == 2) {
 					System.out.println("Informe a Opção que deseja Consultar: ");
-					opcao = cmString.next();
+					opcao = cmString.nextLine();
 					CafeManha cfm = cafeManhaDao.consultar(opcao);
-					System.out.println(cfm.toString());
+					 System.out.println(cfm.toString());
+					
 				}
+
+				break;
 
 			case 5:
 
 				System.out.println("1 - Cpf\n" + "2 - Opção\n");
 				System.out.println("Informe como deseja atualizar: ");
 				int atual = cmInt.nextInt();
+
 				if (atual == 1) {
 					System.out.println("Informe o Cpf que deseja atualizar: ");
-					cpf = cmString.next();
+					cpf = cmString.nextLine();
 					ps.setCpf(cpf);
-					System.out.println("Informe o novo nome para o Cpf informado: ");
-					nome = cmString.nextLine();
-					ps.setCpf(nome);
-					pessoaDao.atualizar(ps);
-					System.out.println("Cpf atualizado com sucesso!");
+					System.out.println("1 - Nome\n" + "2 - Opção\n");
+					System.out.println("Informe o que deseja alterar: ");
+					int atualop = cmInt.nextInt();
+						System.out.println("Informe o novo nome para o Cpf informado: ");
+						nome = cmString.nextLine();
+						ps.setNome(nome);
+						pessoaDao.atualizar(ps);
 
 				} else if (atual == 2) {
 					System.out.println("Informe a Opção que deseja atualizar: ");
 					opcao = cmString.nextLine();
-					ps.setCpf(opcao);
+					cf.setOpcao(opcao);
 					System.out.println("Informe o novo Cpf para a opção informada: ");
-					nome = cmString.nextLine();
-					ps.setCpf(nome);
-					pessoaDao.atualizar(ps);
+					cpf = cmString.nextLine();
+					Pessoa pes = pessoaDao.consultar(cpf);
+					cf.setPessoa(pes);
+					cafeManhaDao.atualizar(cf);
 					System.out.println("Opção atualizada com sucesso!");
 				}
+
+				break;
 
 			case 6:
 

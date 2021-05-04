@@ -1,13 +1,16 @@
 package dao.impl;
 
 import java.util.List;
+import java.util.Scanner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import dao.CafeManhaDao;
+import dao.PessoaDao;
 import entidade.CafeManha;
+import entidade.Pessoa;
 import util.JpaUtil;
 
 public class CafeManhaDaoImpl implements CafeManhaDao {
@@ -17,18 +20,37 @@ public class CafeManhaDaoImpl implements CafeManhaDao {
 
 	@Override
 	public void inserir(CafeManha cafeManha) {
+
+		Scanner cmInt = new Scanner(System.in);
+		Scanner cmString = new Scanner(System.in);
+		int resp1 = 0;
+		String opcao;
+
 		try {
 			this.em = JpaUtil.getEntityManager();
 			et = em.getTransaction();
 			et.begin();
 			em.createNativeQuery("INSERT INTO CAFEMANHA (OPCAO, CPF_PESSOA) VALUES (?,?)")
-					// .setParameter(1,cafeManha.getCod_opcao())
 					.setParameter(1, cafeManha.getOpcao()).setParameter(2, cafeManha.getPessoa().getCpf())
 					.executeUpdate();
-			et.commit();
-
 			System.out.println("Opção de Café da manhã inserida com Sucesso!!");
+			System.out.println("Deseja inserir mais 1 Opção ?(1 - Sim / 2 - Não)");
+			resp1 = cmInt.nextInt();
 
+			while (resp1 == 1) {
+				CafeManha cf = new CafeManha();
+				System.out.println("Informe a Opção : ");
+				opcao = cmString.nextLine();
+				cf.setOpcao(opcao);
+
+				em.createNativeQuery("INSERT INTO CAFEMANHA (OPCAO, CPF_PESSOA) VALUES (?,?)")
+						.setParameter(1, cf.getOpcao()).setParameter(2, cafeManha.getPessoa().getCpf()).executeUpdate();
+				System.out.println("Opção de Café da manhã inserida com Sucesso!!");
+				System.out.println("Deseja inserir mais 1 Opção ?(1 - Sim / 2 - Não)");
+				resp1 = cmInt.nextInt();
+			}
+
+			et.commit();
 		} catch (Exception e) {
 			if (em.isOpen()) {
 				et.rollback();
@@ -77,7 +99,7 @@ public class CafeManhaDaoImpl implements CafeManhaDao {
 					"DELETE FROM CAFEMANHA WHERE COD_OPCAO = (SELECT COD_OPCAO FROM CAFEMANHA WHERE OPCAO = ?)")
 					.setParameter(1, opcao).executeUpdate();
 			et.commit();
-			System.out.println("Opção removida com Sucesso!!");
+
 		} catch (Exception e) {
 			if (em.isOpen()) {
 				et.rollback();
